@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <PackageReference Include="dbup-postgresql" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
+    <PackageReference Include="Npgsql" />
+    <PackageReference Include="PdfPig" />
+  </ItemGroup>
+  <ItemGroup>
+    <!-- SQL migrations live in /db/up and are embedded so the API can apply them on startup. -->
+    <EmbeddedResource Include="..\..\..\db\up\*.sql" LinkBase="Postgres\Migrations" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ProfessionalMatcher.Domain\ProfessionalMatcher.Domain.csproj" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,15 @@
+<Solution>
+  <Folder Name="/src/Backend/">
+    <Project Path="src/Backend/ProfessionalMatcher.Api/ProfessionalMatcher.Api.csproj" />
+    <Project Path="src/Backend/ProfessionalMatcher.Application/ProfessionalMatcher.Application.csproj" />
+    <Project Path="src/Backend/ProfessionalMatcher.Contracts/ProfessionalMatcher.Contracts.csproj" />
+    <Project Path="src/Backend/ProfessionalMatcher.Domain/ProfessionalMatcher.Domain.csproj" />
+    <Project Path="src/Backend/ProfessionalMatcher.Infra/ProfessionalMatcher.Infra.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/ProfessionalMatcher.Api.Tests/ProfessionalMatcher.Api.Tests.csproj" />
+    <Project Path="tests/ProfessionalMatcher.Application.Tests/ProfessionalMatcher.Application.Tests.csproj" />
+    <Project Path="tests/ProfessionalMatcher.Domain.Tests/ProfessionalMatcher.Domain.Tests.csproj" />
+    <Project Path="tests/ProfessionalMatcher.Infra.Tests/ProfessionalMatcher.Infra.Tests.csproj" />
+  </Folder>
+</Solution>

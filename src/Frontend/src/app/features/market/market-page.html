@@ -1,0 +1,104 @@
+<div class="page-header"><h1>Análise de Mercado</h1></div>
+
+@if (error(); as message) {
+  <div class="state error">{{ message }}</div>
+}
+
+@if (loading()) {
+  <div class="state">Carregando...</div>
+} @else {
+  <div class="card filters">
+    <span>Países:</span>
+    @for (country of selectedCountries(); track country.code) {
+      <span class="chip"
+        >{{ country.name
+        }}<button title="Remover" (click)="removeCountry(country.code)">✕</button></span
+      >
+    }
+    <select
+      #add
+      [disabled]="availableCountries().length === 0"
+      (change)="addCountry(add.value); add.value = ''"
+    >
+      <option value="">+ adicionar país</option>
+      @for (country of availableCountries(); track country.code) {
+        <option [value]="country.code">{{ country.name }}</option>
+      }
+    </select>
+    <span class="spacer"></span>
+    <label>
+      Currículo base:
+      <select [ngModel]="resumeId() ?? ''" (ngModelChange)="selectResume($event)">
+        <option value="">Perfil completo</option>
+        @for (resume of resumes(); track resume.id) {
+          <option [value]="resume.id">{{ resume.name }}</option>
+        }
+      </select>
+    </label>
+    <button class="btn outline" [disabled]="refreshing()" (click)="refresh()">
+      {{ refreshing() ? 'Atualizando...' : 'Atualizar' }}
+    </button>
+  </div>
+
+  @if (selectedCodes().length === 0) {
+    <div class="state">Selecione ao menos um país para ver a análise.</div>
+  } @else if (ranking().length === 0) {
+    <div class="state">
+      {{ refreshing() ? 'Buscando dados...' : 'Sem dados para os países selecionados.' }}
+    </div>
+  } @else {
+    <div class="row cards" [class.refreshing]="refreshing()">
+      @for (insight of ranking().slice(0, 4); track insight.countryCode) {
+        <div class="card stat">
+          <div class="muted">{{ insight.countryName }}</div>
+          <b class="big">{{ insight.openJobs | number }}</b>
+          <div class="muted">
+            vagas
+            @if (insight.averageSalary !== null) {
+              · média
+              {{ insight.averageSalary | currency: insight.currency : 'symbol-narrow' : '1.0-0' }}
+            }
+          </div>
+        </div>
+      }
+    </div>
+
+    <div class="card" [class.refreshing]="refreshing()">
+      <h3>Ranking por vagas abertas</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>País</th>
+            <th style="width: 40%">Vagas</th>
+            <th>Salário médio</th>
+            <th>Fontes</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (insight of ranking(); track insight.countryCode) {
+            <tr>
+              <td>{{ insight.countryName }}</td>
+              <td>
+                <div class="bar" [style.width.%]="(insight.openJobs / maxJobs()) * 100"></div>
+                <span class="muted">{{ insight.openJobs | number }}</span>
+              </td>
+              <td>
+                @if (insight.averageSalary !== null) {
+                  {{
+                    insight.averageSalary | currency: insight.currency : 'symbol-narrow' : '1.0-0'
+                  }}
+                } @else {
+                  —
+                }
+              </td>
+              <td class="muted">{{ insight.sources.join(' · ') }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+      @if (lastSync(); as synced) {
+        <p class="muted">Última sincronização: {{ synced | date: 'short' }}</p>
+      }
+    </div>
+  }
+}

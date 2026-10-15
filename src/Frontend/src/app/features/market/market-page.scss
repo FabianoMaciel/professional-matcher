@@ -1,0 +1,31 @@
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+
+  .spacer {
+    flex: 1;
+  }
+}
+
+.cards {
+  .stat {
+    flex: 1;
+  }
+
+  .big {
+    font-size: 24px;
+  }
+}
+
+.refreshing {
+  opacity: 0.6;
+}
+
+.bar {
+  height: 12px;
+  background: #3b6fe0;
+  border-radius: 4px;
+  min-width: 2px;
+}

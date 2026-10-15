@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Professional Matcher - Protótipo</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Segoe UI,Arial,sans-serif;background:#f3f4f8;color:#1f2430;display:flex;height:100vh}
+aside{width:210px;background:#1f2a44;color:#cfd6e6;padding:20px 0;flex-shrink:0}
+aside .logo{font-weight:700;color:#fff;padding:0 20px 20px;font-size:16px}
+aside a{display:block;padding:12px 20px;color:#cfd6e6;text-decoration:none;font-size:14px}
+aside a.on{background:#2f4170;color:#fff;border-left:4px solid #5b9dff;padding-left:16px}
+main{flex:1;padding:24px 28px;overflow:hidden}
+h1{margin:0 0 16px;font-size:22px}
+h3{margin:0 0 10px;font-size:15px}
+.card{background:#fff;border-radius:10px;padding:16px;box-shadow:0 1px 3px #0002}
+.row{display:flex;gap:16px}
+.avatar{width:84px;height:84px;border-radius:50%;background:#c3cde6;display:flex;align-items:center;justify-content:center;font-size:34px;color:#fff;font-weight:700}
+.chip{display:inline-block;padding:3px 10px;border-radius:12px;font-size:12px;margin:2px;background:#e4ecff;color:#2a4a99}
+.chip.sec{background:#eee;color:#555}
+.muted{color:#7a8194;font-size:12px}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{text-align:left;color:#7a8194;font-weight:600;padding:8px;border-bottom:1px solid #e3e6ee}
+td{padding:8px;border-bottom:1px solid #f0f1f5}
+.btn{display:inline-block;background:#3b6fe0;color:#fff;padding:7px 14px;border-radius:6px;font-size:13px}
+.btn.o{background:#fff;color:#3b6fe0;border:1px solid #3b6fe0}
+.sec-page{display:none;height:100%}
+.sec-page:target,.sec-page.default{display:block}
+.sec-page.default:not(:target){display:block}
+body:has(.sec-page:target) .sec-page.default:not(:target){display:none}
+.tl{border-left:2px solid #c3cde6;padding-left:14px;margin-left:6px}
+.tl div{margin-bottom:12px;font-size:13px}
+.cvbox{background:#fff;border:1px solid #dde;padding:18px;font-size:12px;height:330px}
+.kan{display:flex;gap:10px;height:430px}
+.col{flex:1;background:#e9ecf3;border-radius:8px;padding:8px}
+.col h4{margin:0 0 8px;font-size:12px;color:#555;text-transform:uppercase}
+.k{background:#fff;border-radius:6px;padding:9px;margin-bottom:8px;font-size:12px;box-shadow:0 1px 2px #0002}
+.wait{color:#c77700;font-weight:600}
+.bar{height:12px;background:#3b6fe0;border-radius:4px}
+select,.sel{background:#fff;border:1px solid #cbd0dc;border-radius:6px;padding:6px 10px;font-size:13px;display:inline-block}
+.dots{letter-spacing:2px;color:#3b6fe0}
+</style>
+</head>
+<body>
+<aside>
+  <div class="logo">Professional Matcher</div>
+  <a href="#perfil" id="n1">Perfil</a>
+  <a href="#curriculos" id="n2">Currículos</a>
+  <a href="#aplicacoes" id="n3">Aplicações</a>
+  <a href="#mercado" id="n4">Análise de Mercado</a>
+</aside>
+<main>
+
+<!-- PERFIL -->
+<section class="sec-page default" id="perfil">
+  <h1>Perfil</h1>
+  <div class="row">
+    <div style="width:290px">
+      <div class="card" style="text-align:center">
+        <div class="avatar" style="margin:0 auto 10px">FM</div>
+        <b>Fabiano Maciel</b><div class="muted">Senior Software Engineer · .NET</div>
+        <div class="muted" style="margin-top:8px">fmaciel@glasslewis.com<br>Brasil</div>
+        <p style="font-size:12px;text-align:left">Mais de 15 anos com .NET, Azure e bancos relacionais...</p>
+        <span class="btn o">Editar dados</span>
+      </div>
+      <div class="card" style="margin-top:14px">
+        <h3>Formação</h3>
+        <div class="tl"><div><b>Bacharelado em Sistemas de Informação</b><br><span class="muted">Universidade X · 2005–2009</span></div></div>
+      </div>
+    </div>
+    <div style="flex:1">
+      <div class="card">
+        <h3>Conhecimentos <span class="btn" style="float:right">+ Adicionar</span></h3>
+        <table>
+          <tr><th>Tecnologia</th><th>Categoria</th><th>Anos</th><th>Nível</th><th>Tipo</th></tr>
+          <tr><td>.NET C# (MVC, WebAPI)</td><td>Backend</td><td>15</td><td class="dots">●●●●●</td><td><span class="chip">Principal</span></td></tr>
+          <tr><td>Azure</td><td>Cloud</td><td>7</td><td class="dots">●●●●○</td><td><span class="chip">Principal</span></td></tr>
+          <tr><td>SQL Server</td><td>Banco</td><td>15</td><td class="dots">●●●●●</td><td><span class="chip">Principal</span></td></tr>
+          <tr><td>PostgreSQL</td><td>Banco</td><td>5</td><td class="dots">●●●●○</td><td><span class="chip">Principal</span></td></tr>
+          <tr><td>Angular</td><td>Frontend</td><td>3</td><td class="dots">●●●○○</td><td><span class="chip sec">Secundário</span></td></tr>
+          <tr><td>Python</td><td>Backend</td><td>2</td><td class="dots">●●○○○</td><td><span class="chip sec">Secundário</span></td></tr>
+          <tr><td>IIS · Reporting · Stored Procs</td><td>Outros</td><td>12</td><td class="dots">●●●●○</td><td><span class="chip sec">Secundário</span></td></tr>
+        </table>
+      </div>
+      <div class="card" style="margin-top:14px">
+        <h3>Experiência</h3>
+        <div class="tl">
+          <div><b>Glass Lewis</b> — Software Engineer<br><span class="muted">2020 – atual · .NET, Azure, PostgreSQL</span></div>
+          <div><b>Empresa anterior</b> — Desenvolvedor Full Stack<br><span class="muted">2012 – 2020 · WebForms, MVC, Oracle</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CURRICULOS -->
+<section class="sec-page" id="curriculos">
+  <h1>Currículos <span class="sel" style="font-size:13px;font-weight:400;margin-left:12px">Fabiano_CV_BackendAzure ▾</span>
+    <span class="btn o" style="float:right">+ Novo</span></h1>
+  <div class="row">
+    <div class="card" style="width:340px">
+      <h3>O que entra neste currículo</h3>
+      <div style="font-size:13px;line-height:2">
+        <b>Experiências</b><br>
+        ☑ Glass Lewis &nbsp;↑↓<br>☑ Empresa anterior &nbsp;↑↓<br>
+        <b>Conhecimentos</b><br>
+        ☑ .NET C# &nbsp; ☑ Azure &nbsp; ☑ PostgreSQL<br>
+        ☑ SQL Server &nbsp; ☑ Microsserviços<br>
+        ☐ Knockout.js &nbsp; ☐ Java &nbsp; ☐ Oracle
+      </div>
+      <p class="muted">Outras versões: CV_Fullstack · CV_Backend · CV_AIAssisted</p>
+    </div>
+    <div style="flex:1">
+      <div class="cvbox">
+        <b style="font-size:18px">Fabiano Maciel</b><div class="muted">Backend Engineer · Azure</div><hr>
+        <b>Resumo</b><p>Engenheiro backend com foco em .NET e Azure...</p>
+        <b>Experiência</b><p><b>Glass Lewis</b> — Software Engineer (2020–atual)<br>• APIs .NET em Azure com PostgreSQL</p>
+        <b>Conhecimentos</b><br><span class="chip">.NET C#</span><span class="chip">Azure</span><span class="chip">PostgreSQL</span><span class="chip">SQL Server</span><span class="chip">Microsserviços</span>
+      </div>
+      <div style="margin-top:12px"><span class="btn">Exportar PDF</span> <span class="btn o">Duplicar</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- APLICACOES -->
+<section class="sec-page" id="aplicacoes">
+  <h1>Aplicações <span class="btn o" style="float:right;margin-left:8px">Kanban | Tabela</span><span class="btn" style="float:right">+ Nova aplicação</span></h1>
+  <div class="kan">
+    <div class="col"><h4>Aplicado (2)</h4>
+      <div class="k"><b>Empresa A</b><br>Sr .NET Dev<br><span class="muted">CV: Backend</span></div>
+      <div class="k"><b>Empresa B</b><br>Backend Eng<br><span class="muted">CV: BackendAzure</span></div></div>
+    <div class="col"><h4>Stage 1 · RH Call (1)</h4>
+      <div class="k"><b>Empresa Z</b><br>Fullstack<br><span class="muted">CV: Fullstack</span><br><span class="wait">⏳ Aguardando retorno</span></div></div>
+    <div class="col"><h4>Stage 2 · Code assessment (1)</h4>
+      <div class="k"><b>Empresa X</b><br>Sr Backend<br><span class="muted">CV: Backend</span><br>Code assessment enviado<br><span class="wait">⏳ Aguardando retorno</span></div></div>
+    <div class="col"><h4>Entrevista final</h4></div>
+    <div class="col"><h4>Oferta</h4></div>
+    <div class="col"><h4>Recusado (1)</h4>
+      <div class="k" style="opacity:.6"><b>Empresa C</b><br>Tech Lead</div></div>
+  </div>
+</section>
+
+<!-- MERCADO -->
+<section class="sec-page" id="mercado">
+  <h1>Análise de Mercado</h1>
+  <div class="card" style="margin-bottom:14px">
+    Países: <span class="sel">Brasil ✕</span> <span class="sel">Itália ✕</span> <span class="sel">Portugal ✕</span> <span class="sel">Espanha ✕</span> <span class="sel">Luxemburgo ✕</span> <span class="sel">+ adicionar ▾</span>
+    &nbsp;&nbsp; Currículo base: <span class="sel">Fabiano_CV_Backend ▾</span>
+  </div>
+  <div class="row" style="margin-bottom:14px">
+    <div class="card" style="flex:1"><div class="muted">Brasil</div><b style="font-size:24px">5.248</b><div class="muted">vagas · média R$ 14.500</div></div>
+    <div class="card" style="flex:1"><div class="muted">Espanha</div><b style="font-size:24px">593</b><div class="muted">vagas · média € 48.000</div></div>
+    <div class="card" style="flex:1"><div class="muted">Itália</div><b style="font-size:24px">489</b><div class="muted">vagas · média € 45.000</div></div>
+    <div class="card" style="flex:1"><div class="muted">Portugal</div><b style="font-size:24px">321</b><div class="muted">vagas · média € 42.000</div></div>
+  </div>
+  <div class="card">
+    <h3>Ranking por vagas abertas</h3>
+    <table>
+      <tr><th>País</th><th style="width:40%">Vagas</th><th>Salário médio</th><th>Fontes</th></tr>
+      <tr><td>Brasil</td><td><div class="bar" style="width:100%"></div></td><td>R$ 14.500</td><td class="muted">LinkedIn · Glassdoor</td></tr>
+      <tr><td>Espanha</td><td><div class="bar" style="width:11%"></div></td><td>€ 48.000</td><td class="muted">LinkedIn · Levels.fyi</td></tr>
+      <tr><td>Itália</td><td><div class="bar" style="width:9%"></div></td><td>€ 45.000</td><td class="muted">LinkedIn · Glassdoor</td></tr>
+      <tr><td>Portugal</td><td><div class="bar" style="width:6%"></div></td><td>€ 42.000</td><td class="muted">LinkedIn · Glassdoor</td></tr>
+      <tr><td>Luxemburgo</td><td><div class="bar" style="width:2%"></div></td><td>€ 70.000</td><td class="muted">LinkedIn · Levels.fyi</td></tr>
+    </table>
+    <p class="muted">Dados ilustrativos · última sincronização: hoje 09:12</p>
+  </div>
+</section>
+
+</main>
+<script>
+const h=(location.hash||'#perfil').slice(1);
+document.querySelectorAll('aside a').forEach(a=>a.classList.toggle('on',a.getAttribute('href')==='#'+h));
+addEventListener('hashchange',()=>location.reload());
+</script>
+</body>
+</html>

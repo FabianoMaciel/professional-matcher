@@ -1,0 +1,165 @@
+<div class="page-header">
+  <h1>Aplicações</h1>
+  <select [ngModel]="stageFilter()" (ngModelChange)="stageFilter.set($event)">
+    <option value="">Todos os estágios</option>
+    @for (stage of stages; track stage.key) {
+      <option [value]="stage.key">{{ stage.label }}</option>
+    }
+  </select>
+  <label class="muted"
+    ><input type="checkbox" [ngModel]="onlyAwaiting()" (ngModelChange)="onlyAwaiting.set($event)" />
+    Só aguardando retorno</label
+  >
+  <span class="toggle">
+    <button class="btn small" [class.outline]="view() !== 'kanban'" (click)="view.set('kanban')">
+      Kanban
+    </button>
+    <button class="btn small" [class.outline]="view() !== 'table'" (click)="view.set('table')">
+      Tabela
+    </button>
+  </span>
+  <button class="btn" (click)="openNew()">+ Nova aplicação</button>
+</div>
+
+@if (error(); as message) {
+  <div class="state error">{{ message }}</div>
+}
+
+@if (loading()) {
+  <div class="state">Carregando...</div>
+} @else if (view() === 'kanban') {
+  <div class="kanban">
+    @for (column of columns(); track column.key) {
+      <div class="column" (dragover)="$event.preventDefault()" (drop)="drop(column.key)">
+        <h4>{{ column.label }} ({{ column.items.length }})</h4>
+        @for (item of column.items; track item.id) {
+          <div
+            class="item"
+            [class.dim]="item.stage === 'rejected'"
+            draggable="true"
+            (dragstart)="dragStart(item)"
+            (click)="open(item)"
+          >
+            <b>{{ item.company }}</b
+            ><br />
+            {{ item.position }}<br />
+            <span class="muted">CV: {{ resumeName(item.resumeId) }}</span>
+            @if (item.stageDetail) {
+              <br />{{ item.stageDetail }}
+            }
+            @if (item.awaitingResponse) {
+              <br /><span class="wait">⏳ Aguardando retorno</span>
+            }
+          </div>
+        }
+      </div>
+    }
+  </div>
+} @else {
+  <div class="card">
+    <table>
+      <thead>
+        <tr>
+          <th>Empresa</th>
+          <th>Vaga</th>
+          <th>Currículo</th>
+          <th>Estágio</th>
+          <th>Status</th>
+          <th>Atualizado</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (item of filtered(); track item.id) {
+          <tr class="clickable" (click)="open(item)">
+            <td>{{ item.company }}</td>
+            <td>{{ item.position }}</td>
+            <td>{{ resumeName(item.resumeId) }}</td>
+            <td>
+              {{ stageLabel(item.stage) }}
+              @if (item.stageDetail) {
+                <span class="muted">· {{ item.stageDetail }}</span>
+              }
+            </td>
+            <td>
+              @if (item.awaitingResponse) {
+                <span class="wait">⏳ Aguardando retorno</span>
+              }
+            </td>
+            <td>{{ item.updatedAt | date: 'shortDate' }}</td>
+          </tr>
+        } @empty {
+          <tr>
+            <td colspan="6" class="muted">Nenhuma aplicação encontrada.</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+}
+
+@if (dialogOpen()) {
+  <div class="modal-backdrop">
+    <form class="modal" (ngSubmit)="save()">
+      <h3>{{ editing() ? 'Aplicação' : 'Nova aplicação' }}</h3>
+      <div class="grid">
+        <label>Empresa <input name="company" [(ngModel)]="draft.company" required /></label>
+        <label>Vaga <input name="position" [(ngModel)]="draft.position" required /></label>
+        <label>
+          Currículo usado
+          <select name="resume" [(ngModel)]="draft.resumeId">
+            <option [ngValue]="null">—</option>
+            @for (resume of resumes(); track resume.id) {
+              <option [ngValue]="resume.id">{{ resume.name }}</option>
+            }
+          </select>
+        </label>
+        <label>
+          Estágio
+          <select name="stage" [(ngModel)]="draft.stage">
+            @for (stage of stages; track stage.key) {
+              <option [ngValue]="stage.key">{{ stage.label }}</option>
+            }
+          </select>
+        </label>
+      </div>
+      <label
+        >Detalhe do estágio
+        <input
+          name="stageDetail"
+          placeholder="ex.: Code assessment enviado"
+          [(ngModel)]="draft.stageDetail"
+      /></label>
+      <label>Link da vaga <input name="jobUrl" [(ngModel)]="draft.jobUrl" /></label>
+      <label class="inline"
+        ><input name="awaiting" type="checkbox" [(ngModel)]="draft.awaitingResponse" /> Aguardando
+        retorno</label
+      >
+      <label>Notas <textarea name="notes" rows="3" [(ngModel)]="draft.notes"></textarea></label>
+
+      @if (editing(); as current) {
+        <h3>Histórico</h3>
+        <div class="timeline">
+          @for (entry of current.history; track $index) {
+            <div>
+              <b>{{ stageLabel(entry.stage) }}</b>
+              <span class="muted">{{ entry.date | date: 'short' }}</span>
+              @if (entry.detail) {
+                <br />{{ entry.detail }}
+              }
+            </div>
+          }
+        </div>
+      }
+
+      <div class="actions">
+        @if (editing()) {
+          <button type="button" class="btn danger" style="margin-right: auto" (click)="remove()">
+            Remover
+          </button>
+        }
+        <button type="button" class="btn outline" (click)="close()">Cancelar</button>
+        <button class="btn" [disabled]="saving()">Salvar</button>
+      </div>
+    </form>
+  </div>
+}

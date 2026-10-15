@@ -1,0 +1,271 @@
+<div class="page-header"><h1>Perfil</h1></div>
+
+@if (error(); as message) {
+  <div class="state error">
+    {{ message }}
+    @if (!profile()) {
+      <button class="btn outline small" (click)="load()">Tentar novamente</button>
+    }
+  </div>
+}
+
+@if (loading()) {
+  <div class="state">Carregando...</div>
+} @else if (profile(); as p) {
+  <div class="row">
+    <div style="width: 290px; flex-shrink: 0">
+      <div class="card" style="text-align: center">
+        @if (p.photoUrl) {
+          <img [src]="p.photoUrl" alt="Foto" class="avatar" />
+        } @else {
+          <div class="avatar">{{ initials() }}</div>
+        }
+        <b>{{ p.fullName }}</b>
+        <div class="muted">{{ p.headline }}</div>
+        <div class="muted" style="margin: 8px 0">{{ p.email }}<br />{{ p.location }}</div>
+        <p style="font-size: 12px; text-align: left">{{ p.summary }}</p>
+        <button class="btn outline" (click)="openDetails()">Editar dados</button>
+      </div>
+
+      <div class="card">
+        <h3>
+          Formação
+          <button class="btn small" style="float: right" (click)="openEducation()">+</button>
+        </h3>
+        @if (education().length === 0) {
+          <div class="muted">Nenhuma formação cadastrada.</div>
+        }
+        <div class="timeline">
+          @for (item of education(); track item.id) {
+            <div>
+              <b>{{ item.degree }}</b
+              ><br />
+              <span class="muted"
+                >{{ item.institution }} · {{ item.startYear }}–{{ item.endYear ?? 'atual' }}</span
+              ><br />
+              <button class="btn outline small" (click)="openEducation(item)">Editar</button>
+              <button class="btn danger small" (click)="deleteEducation(item)">Remover</button>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+
+    <div style="flex: 1; min-width: 0">
+      <div class="card">
+        <h3>
+          Conhecimentos
+          <button class="btn" style="float: right" (click)="openSkill()">+ Adicionar</button>
+          <select
+            style="float: right; margin-right: 8px"
+            [ngModel]="categoryFilter()"
+            (ngModelChange)="categoryFilter.set($event)"
+          >
+            <option value="">Todas as categorias</option>
+            @for (category of categories(); track category) {
+              <option [value]="category">{{ category }}</option>
+            }
+          </select>
+        </h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Tecnologia</th>
+              <th>Categoria</th>
+              <th>Anos</th>
+              <th>Nível</th>
+              <th>Tipo</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (skill of skills(); track skill.id) {
+              <tr>
+                <td>{{ skill.name }}</td>
+                <td>{{ skill.category }}</td>
+                <td>{{ skill.yearsOfExperience }}</td>
+                <td class="dots">{{ dots(skill.level) }}</td>
+                <td>
+                  <span class="chip" [class.secondary]="!skill.isPrimary">{{
+                    skill.isPrimary ? 'Principal' : 'Secundário'
+                  }}</span>
+                </td>
+                <td style="text-align: right; white-space: nowrap">
+                  <button class="btn outline small" (click)="openSkill(skill)">Editar</button>
+                  <button class="btn danger small" (click)="deleteSkill(skill)">Remover</button>
+                </td>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="6" class="muted">Nenhum conhecimento cadastrado.</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <div class="card">
+        <h3>
+          Experiência
+          <button class="btn small" style="float: right" (click)="openExperience()">
+            + Adicionar
+          </button>
+        </h3>
+        @if (experiences().length === 0) {
+          <div class="muted">Nenhuma experiência cadastrada.</div>
+        }
+        <div class="timeline">
+          @for (item of experiences(); track item.id) {
+            <div>
+              <b>{{ item.company }}</b> — {{ item.role }}<br />
+              <span class="muted">
+                {{ item.startDate | date: 'MMM y' }} –
+                {{ item.endDate ? (item.endDate | date: 'MMM y') : 'atual' }}
+                @if (item.technologies.length) {
+                  · {{ item.technologies.join(', ') }}
+                }
+              </span>
+              @if (item.description) {
+                <div>{{ item.description }}</div>
+              }
+              <button class="btn outline small" (click)="openExperience(item)">Editar</button>
+              <button class="btn danger small" (click)="deleteExperience(item)">Remover</button>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+}
+
+@switch (dialog()) {
+  @case ('details') {
+    <div class="modal-backdrop">
+      <form class="modal" (ngSubmit)="saveDetails()">
+        <h3>Editar dados</h3>
+        <label>Foto <input type="file" accept="image/*" (change)="uploadPhoto($event)" /></label>
+        <label>Nome <input name="fullName" [(ngModel)]="details.fullName" required /></label>
+        <label>Título profissional <input name="headline" [(ngModel)]="details.headline" /></label>
+        <div class="grid">
+          <label>E-mail <input name="email" type="email" [(ngModel)]="details.email" /></label>
+          <label>Localização <input name="location" [(ngModel)]="details.location" /></label>
+        </div>
+        <label
+          >Resumo <textarea name="summary" rows="4" [(ngModel)]="details.summary"></textarea>
+        </label>
+        <div class="actions">
+          <button type="button" class="btn outline" (click)="closeDialog()">Cancelar</button>
+          <button class="btn" [disabled]="saving()">Salvar</button>
+        </div>
+      </form>
+    </div>
+  }
+  @case ('skill') {
+    <div class="modal-backdrop">
+      <form class="modal" (ngSubmit)="saveSkill()">
+        <h3>{{ editingId() ? 'Editar' : 'Novo' }} conhecimento</h3>
+        <label>Tecnologia <input name="name" [(ngModel)]="skillDraft.name" required /></label>
+        <label>
+          Categoria
+          <input
+            name="category"
+            list="skill-categories"
+            [(ngModel)]="skillDraft.category"
+            required
+          />
+          <datalist id="skill-categories">
+            @for (category of categories(); track category) {
+              <option [value]="category"></option>
+            }
+          </datalist>
+        </label>
+        <div class="grid">
+          <label
+            >Anos de experiência
+            <input name="years" type="number" min="0" [(ngModel)]="skillDraft.yearsOfExperience"
+          /></label>
+          <label>
+            Nível
+            <select name="level" [(ngModel)]="skillDraft.level">
+              @for (level of [1, 2, 3, 4, 5]; track level) {
+                <option [ngValue]="level">{{ level }} — {{ dots(level) }}</option>
+              }
+            </select>
+          </label>
+        </div>
+        <label class="inline"
+          ><input name="primary" type="checkbox" [(ngModel)]="skillDraft.isPrimary" /> Conhecimento
+          principal</label
+        >
+        <div class="actions">
+          <button type="button" class="btn outline" (click)="closeDialog()">Cancelar</button>
+          <button class="btn" [disabled]="saving()">Salvar</button>
+        </div>
+      </form>
+    </div>
+  }
+  @case ('experience') {
+    <div class="modal-backdrop">
+      <form class="modal" (ngSubmit)="saveExperience()">
+        <h3>{{ editingId() ? 'Editar' : 'Nova' }} experiência</h3>
+        <div class="grid">
+          <label
+            >Empresa <input name="company" [(ngModel)]="experienceDraft.company" required
+          /></label>
+          <label>Cargo <input name="role" [(ngModel)]="experienceDraft.role" required /></label>
+          <label
+            >Início
+            <input name="start" type="month" [(ngModel)]="experienceDraft.startDate" required
+          /></label>
+          <label
+            >Fim (vazio = atual)
+            <input name="end" type="month" [(ngModel)]="experienceDraft.endDate"
+          /></label>
+        </div>
+        <label
+          >Descrição
+          <textarea
+            name="description"
+            rows="3"
+            [(ngModel)]="experienceDraft.description"
+          ></textarea>
+        </label>
+        <label
+          >Tecnologias (separadas por vírgula)
+          <input name="tech" [(ngModel)]="experienceDraft.technologies"
+        /></label>
+        <div class="actions">
+          <button type="button" class="btn outline" (click)="closeDialog()">Cancelar</button>
+          <button class="btn" [disabled]="saving()">Salvar</button>
+        </div>
+      </form>
+    </div>
+  }
+  @case ('education') {
+    <div class="modal-backdrop">
+      <form class="modal" (ngSubmit)="saveEducation()">
+        <h3>{{ editingId() ? 'Editar' : 'Nova' }} formação</h3>
+        <label
+          >Curso / grau <input name="degree" [(ngModel)]="educationDraft.degree" required
+        /></label>
+        <label
+          >Instituição <input name="institution" [(ngModel)]="educationDraft.institution" required
+        /></label>
+        <div class="grid">
+          <label
+            >Ano de início
+            <input name="startYear" type="number" [(ngModel)]="educationDraft.startYear" required
+          /></label>
+          <label
+            >Ano de término
+            <input name="endYear" type="number" [(ngModel)]="educationDraft.endYear"
+          /></label>
+        </div>
+        <div class="actions">
+          <button type="button" class="btn outline" (click)="closeDialog()">Cancelar</button>
+          <button class="btn" [disabled]="saving()">Salvar</button>
+        </div>
+      </form>
+    </div>
+  }
+}

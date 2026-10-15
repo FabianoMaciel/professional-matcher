@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <PackageReference Include="WolverineFx" />
+    <PackageReference Include="WolverineFx.FluentValidation" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ProfessionalMatcher.Contracts\ProfessionalMatcher.Contracts.csproj" />
+    <ProjectReference Include="..\ProfessionalMatcher.Domain\ProfessionalMatcher.Domain.csproj" />
+    <ProjectReference Include="..\ProfessionalMatcher.Infra\ProfessionalMatcher.Infra.csproj" />
+  </ItemGroup>
+</Project>

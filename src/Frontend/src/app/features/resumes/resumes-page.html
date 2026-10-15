@@ -1,0 +1,136 @@
+<div class="page-header no-print">
+  <h1>Currículos</h1>
+  @if (resumes().length) {
+    <select [ngModel]="selectedId()" (ngModelChange)="selectById($event)">
+      @for (resume of resumes(); track resume.id) {
+        <option [value]="resume.id">{{ resume.name }}</option>
+      }
+    </select>
+  }
+  <button class="btn outline" (click)="create()">+ Novo</button>
+</div>
+
+@if (error(); as message) {
+  <div class="state error no-print">{{ message }}</div>
+}
+
+@if (loading()) {
+  <div class="state">Carregando...</div>
+} @else if (!selected()) {
+  <div class="state">Nenhum currículo ainda. Clique em "+ Novo" para criar o primeiro.</div>
+} @else {
+  <div class="row">
+    <div class="card editor no-print">
+      <h3>O que entra neste currículo</h3>
+      <label>Nome <input [ngModel]="name()" (ngModelChange)="setField('name', $event)" /></label>
+      <label
+        >Título <input [ngModel]="headline()" (ngModelChange)="setField('headline', $event)"
+      /></label>
+      <label
+        >Resumo
+        <textarea
+          rows="3"
+          [ngModel]="summary()"
+          (ngModelChange)="setField('summary', $event)"
+        ></textarea>
+      </label>
+
+      <h4>Experiências</h4>
+      @for (item of experienceItems(); track item.id; let i = $index) {
+        <div class="pick" [class.off]="!item.included">
+          <input type="checkbox" [checked]="item.included" (change)="toggle('experience', i)" />
+          <span
+            >{{ item.label }} <span class="muted">{{ item.detail }}</span></span
+          >
+          <span class="arrows">
+            <button
+              class="btn outline small"
+              [disabled]="i === 0"
+              (click)="reorder('experience', i, -1)"
+            >
+              ↑
+            </button>
+            <button
+              class="btn outline small"
+              [disabled]="i === experienceItems().length - 1"
+              (click)="reorder('experience', i, 1)"
+            >
+              ↓
+            </button>
+          </span>
+        </div>
+      } @empty {
+        <div class="muted">Cadastre experiências na aba Perfil.</div>
+      }
+
+      <h4>Conhecimentos</h4>
+      @for (item of skillItems(); track item.id; let i = $index) {
+        <div class="pick" [class.off]="!item.included">
+          <input type="checkbox" [checked]="item.included" (change)="toggle('skill', i)" />
+          <span
+            >{{ item.label }} <span class="muted">{{ item.detail }}</span></span
+          >
+          <span class="arrows">
+            <button
+              class="btn outline small"
+              [disabled]="i === 0"
+              (click)="reorder('skill', i, -1)"
+            >
+              ↑
+            </button>
+            <button
+              class="btn outline small"
+              [disabled]="i === skillItems().length - 1"
+              (click)="reorder('skill', i, 1)"
+            >
+              ↓
+            </button>
+          </span>
+        </div>
+      } @empty {
+        <div class="muted">Cadastre conhecimentos na aba Perfil.</div>
+      }
+    </div>
+
+    <div class="preview-column">
+      <div class="cv-preview">
+        <b class="cv-name">{{ profile()?.fullName }}</b>
+        <div class="muted">{{ headline() }}</div>
+        <hr />
+        @if (summary()) {
+          <b>Resumo</b>
+          <p>{{ summary() }}</p>
+        }
+        @if (previewExperiences().length) {
+          <b>Experiência</b>
+          @for (experience of previewExperiences(); track experience.id) {
+            <p>
+              <b>{{ experience.company }}</b> — {{ experience.role }} ({{
+                experience.startDate | date: 'MMM y'
+              }}
+              – {{ experience.endDate ? (experience.endDate | date: 'MMM y') : 'atual' }})
+              @if (experience.description) {
+                <br />• {{ experience.description }}
+              }
+            </p>
+          }
+        }
+        @if (previewSkills().length) {
+          <b>Conhecimentos</b><br />
+          @for (skill of previewSkills(); track skill.id) {
+            <span class="chip">{{ skill.label }}</span>
+          }
+        }
+      </div>
+      <div class="no-print actions">
+        <button class="btn" [disabled]="saving() || !dirty()" (click)="save()">
+          {{ dirty() ? 'Salvar' : 'Salvo' }}
+        </button>
+        <button class="btn outline" (click)="exportPdf()">Exportar PDF</button>
+        <button class="btn outline" [disabled]="saving()" (click)="duplicate()">Duplicar</button>
+        <button class="btn danger" [disabled]="saving()" (click)="remove()">Remover</button>
+        <span class="muted">Atualizado em {{ selected()?.updatedAt | date: 'short' }}</span>
+      </div>
+    </div>
+  </div>
+}

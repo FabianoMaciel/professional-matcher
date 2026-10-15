@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+  <PropertyGroup>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <NoWarn>$(NoWarn);1591</NoWarn>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Asp.Versioning.Mvc" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ProfessionalMatcher.Application\ProfessionalMatcher.Application.csproj" />
+    <ProjectReference Include="..\ProfessionalMatcher.Domain\ProfessionalMatcher.Domain.csproj" />
+  </ItemGroup>
+</Project>
