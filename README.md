@@ -1,46 +1,61 @@
 # Professional Matcher
 
-Plataforma onde o usuário (inicialmente o próprio autor) mantém um perfil profissional completo, no estilo LinkedIn, mas com foco diferente: registrar **todos** os conhecimentos e experiências, para depois montar currículos sob medida para cada vaga, acompanhar candidaturas e analisar mercados de interesse.
+A platform where the user (initially the author) keeps a complete professional profile, LinkedIn-style, with a different focus: record **everything** they know and have done, then build tailor-made résumés for each job, track applications, and analyse the markets they are interested in.
 
-## Estrutura
+## Structure
 
-- `src/Backend` – API .NET (Api, Application, Contracts, Domain, Infra)
-- `src/Frontend` – Angular (`professional-matcher-web`)
-- `tests` – testes do backend
-- `db` – scripts de banco
+- `src/Backend` – .NET API (Api, Application, Contracts, Domain, Infra)
+- `src/Frontend` – Angular app (`professional-matcher-web`)
+- `tests` – backend tests
+- `db` – SQL migration scripts (applied by the API on startup)
+- `docs/prototypes` – screen mockups
+- `docker-compose.yml` – local PostgreSQL
 
-## Abas / Módulos
+## Getting started
 
-### 1. Perfil
-Foto, dados gerais, experiências e formações, além de um inventário completo de conhecimentos (tecnologias, ferramentas e práticas), com destaque para o que é principal e registro do que é secundário.
+```powershell
+docker compose up -d                                                              # PostgreSQL on localhost:6538
+dotnet run --project src\Backend\ProfessionalMatcher.Api --launch-profile http    # API on http://localhost:5000
+cd src\Frontend; npm install; npm start                                           # UI on http://localhost:4200
+```
 
-Exemplo (autor):
-- Principal: .NET C# (WebForms, MVC, WebAPI), Azure, SQL Server, Oracle, PostgreSQL, MongoDB.
-- Também: Python, Java, Angular, Knockout.js, microsserviços, IIS, reporting, stored procedures.
+The frontend runs on an in-memory mock API by default. Set `useMocks: false` in
+`src/Frontend/src/environments/environment.development.ts` to use the real backend.
 
-O objetivo é que, conforme a vaga, o currículo possa ser modelado a partir desse inventário.
+## Tabs / Modules
 
-### 2. Currículos
-Várias versões do currículo, cada uma focada num tipo de vaga. Exemplos:
+### 1. Profile
+Photo, general data, experiences and education, plus a complete inventory of knowledge (technologies, tools and practices), highlighting what is primary and recording what is secondary.
+
+Example (author):
+- Primary: .NET C# (WebForms, MVC, WebAPI), Azure, SQL Server, Oracle, PostgreSQL, MongoDB.
+- Also: Python, Java, Angular, Knockout.js, microservices, IIS, reporting, stored procedures.
+
+The goal is that, depending on the job, a résumé can be shaped from this inventory.
+
+The profile can be populated from an existing résumé in PDF (`POST /api/v1/professionals/{id}/cv-import`). The import is rule-based (no AI): it recognises sections such as Experience / Job History and Technical Skills / Education in English or Portuguese, reads job titles, companies and date ranges, and estimates each skill's years and level from the jobs that mention it. Existing data is never removed, and entries already on the profile are skipped.
+
+### 2. Résumés
+Several versions of the résumé, each focused on a type of job. Examples:
 - Fabiano_CV_Fullstack
 - Fabiano_CV_Backend
 - Fabiano_CV_BackendAzure
 - Fabiano_CV_AIAssisted
 
-Cada currículo seleciona e ordena experiências e conhecimentos do perfil.
+Each résumé selects and orders experiences and skills from the profile.
 
-### 3. Aplicações
-Registro de cada candidatura: empresa, vaga, qual currículo foi usado, e o estágio atual com histórico e status de retorno.
+### 3. Applications
+A record of each application: company, position, which résumé was used, and the current stage with its history and whether a reply is pending.
 
-Exemplos:
-- Empresa X – Stage 2 – Code assessment enviado
-- Empresa Z – Stage 1 – Call com RH, aguardando retorno
+Examples:
+- Company X – Stage 2 – Code assessment submitted
+- Company Z – Stage 1 – HR call, waiting for an answer
 
-### 4. Análise de Mercado
-A partir do perfil/currículo, busca dados de mercado em fontes como LinkedIn, Glassdoor e Levels.fyi. O usuário seleciona num dropdown os países de interesse e vê, por país:
-- Quantidade de vagas abertas para o perfil
-- Pagamento médio (na moeda local / convertido)
+### 4. Market Analysis
+From the profile/résumé, collects market data from sources such as LinkedIn, Glassdoor and Levels.fyi. The user picks the countries of interest from a dropdown and sees, per country:
+- Number of open jobs matching the profile
+- Average pay (in local currency / converted)
 
-Exemplo: Brasil – 5248 vagas, média R$ xxx; Itália – 489; Portugal – 321; Espanha – 593; Luxemburgo – 101.
+Example: Brazil – 5,248 jobs, average R$ xxx; Italy – 489; Portugal – 321; Spain – 593; Luxembourg – 101.
 
-A sincronização com as fontes é feita no backend (escopo futuro).
+Syncing with the sources is done in the backend (future scope).
